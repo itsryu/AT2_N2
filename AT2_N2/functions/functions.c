@@ -101,6 +101,8 @@ void exibirPlaylist(Playlist* playlist, No* musicaAtual) {
 		return;
 	} else {
 		No* current = playlist->topo;
+
+		printf("---------- Músicas adicionadas ----------\n\n");
 		
 		do {
 			if(current == musicaAtual) {
@@ -112,6 +114,9 @@ void exibirPlaylist(Playlist* playlist, No* musicaAtual) {
 			printf("%s - %s\n", current->musica, current->artista);
 			current = current->prox;
 		} while(current != playlist->topo);
+
+		printf("\n\nUtilize as setas do teclado (<- / ->) para mudar de música.\n");
+		printf("Pressione ENTER para voltar.");
 
 		printf("\n");
 	}
@@ -152,6 +157,8 @@ void exibirPlaylistOrdenada(Playlist* playlist, No* musicaAtual) {
 				}
 			}
 
+			printf("---------- Músicas adicionadas ----------\n\n");
+
 			for(int i = 0; i < numMus; i++) {
 				if(aux[i] == musicaAtual) {
 					printf("-> ");
@@ -161,6 +168,9 @@ void exibirPlaylistOrdenada(Playlist* playlist, No* musicaAtual) {
 
 				printf("%s - %s\n", aux[i]->musica, aux[i]->artista);
 			}
+
+			printf("\n\nUtilize as setas do teclado (<- / ->) para mudar de música.\n");
+			printf("Pressione ENTER para voltar.");
 
 			printf("\n");
 
