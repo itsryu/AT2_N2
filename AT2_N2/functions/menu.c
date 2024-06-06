@@ -145,7 +145,7 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 
 			if(musicaEncontrada) {
 				if(removerArtista(playlist, musicaEncontrada) == 0) {;
-					salvarArquivo(CAMINHO_ARQUIVO, playlist);
+					salvarArquivo(arquivo, playlist);
 					printf("Música removida com sucesso.\n");
 				} else {
 					printf("Erro ao remover a música. Playlist vazia\n");

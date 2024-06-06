@@ -9,7 +9,7 @@ int main(void) {
 	FILE* arquivo = fopen(CAMINHO_ARQUIVO, "r");
 
 	if(arquivo == NULL) {
-		printf("NÃ£o foi possivel abrir o arquivo. Encerrando o programa...\n");
+		printf("Não foi possivel abrir o arquivo. Encerrando o programa...\n");
 		return 1;
 	} else {
 		Playlist* playlist = criarPlaylist();
