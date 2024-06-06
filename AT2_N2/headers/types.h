@@ -1,15 +1,20 @@
 #pragma once
 
 #define CAMINHO_ARQUIVO "./musicas.txt"
+#define true 1
+#define false 0
+#define ESQUERDA 75
+#define DIREITA 77
+#define ENTER 13
 
-typedef struct Node {
+typedef struct No {
 	char artista[100];
 	char musica[100];
-	struct Node* prox;
-	struct Node* anterior;
-} Node;
+	struct No* prox;
+	struct No* anterior;
+} No;
 
 typedef struct Playlist {
-	struct Node* topo;
-	struct Node* atual;
+	struct No* topo;
+	struct No* atual;
 } Playlist;

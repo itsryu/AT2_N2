@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
+#include <windows.h>
+#include <conio.h>
 
 #include "../headers/types.h"
 #include "../headers/functions.h"
 
-Node* criarNo(const char* artista, const char* musica) {
-	Node* no = (Node*) malloc(sizeof(Node));
+No* criarNo(const char* artista, const char* musica) {
+	No* no = (No*) malloc(sizeof(No));
 	strcpy(no->artista, artista);
 	strcpy(no->musica, musica);
 	no->prox = no->anterior	 = no;
@@ -24,13 +26,13 @@ Playlist* criarPlaylist() {
 }
 
 void adicionarArtista(Playlist* playlist, const char* artist, const char* song) {
-	Node* novoNo = criarNo(artist, song);
+	No* novoNo = criarNo(artist, song);
 
 	if(!playlist->topo) {
 		playlist->topo = novoNo;
 		playlist->atual = novoNo;
 	} else {
-		Node* aux = playlist->topo->anterior;
+		No* aux = playlist->topo->anterior;
 		aux->prox = novoNo;
 
 		novoNo->anterior = aux;
@@ -39,14 +41,20 @@ void adicionarArtista(Playlist* playlist, const char* artist, const char* song) 
 	}
 }
 
-void exibirPlaylist(Playlist* playlist) {
+void exibirPlaylist(Playlist* playlist, No* musicaAtual) {
 	if(!playlist->topo) {
 		printf("Playlist vazia!\n");
 		return;
 	} else {
-		Node* current = playlist->topo;
-
+		No* current = playlist->topo;
+		
 		do {
+			if(current == musicaAtual) {
+				printf("-> ");
+			} else {
+				printf("   ");
+			}
+
 			printf("%s - %s\n", current->musica, current->artista);
 			current = current->prox;
 		} while(current != playlist->topo);
@@ -55,12 +63,12 @@ void exibirPlaylist(Playlist* playlist) {
 	}
 }
 
-void exibirPlaylistOrdenada(Playlist* playlist) {
+void exibirPlaylistOrdenada(Playlist* playlist, No* musicaAtual) {
     if (!playlist->topo) {
 		printf("Playlist vazia!\n");
 		return;
 	} else {
-    	Node* atual = playlist->topo;
+		No* atual = playlist->topo;
 		int numMus = 0;
 
     	do {
@@ -68,7 +76,7 @@ void exibirPlaylistOrdenada(Playlist* playlist) {
         	atual = atual->prox;
     	} while (atual != playlist->topo);
 
-    	Node** aux = (Node**) malloc(numMus * sizeof(Node*));
+		No** aux = (No**) malloc(numMus * sizeof(No*));
 
     	atual = playlist->topo;
 
@@ -80,7 +88,7 @@ void exibirPlaylistOrdenada(Playlist* playlist) {
     	for (int i = 0; i < numMus - 1; i++) {
         	for (int j = i + 1; j < numMus; j++) {
             	if (strcmp(aux[i]->musica, aux[j]->musica) > 0) {
-                	Node* temp = aux[i];
+					No* temp = aux[i];
                 	aux[i] = aux[j];
                 	aux[j] = temp;
             	}
@@ -88,6 +96,12 @@ void exibirPlaylistOrdenada(Playlist* playlist) {
     	}
 
     	for (int i = 0; i < numMus; i++) {
+			if (aux[i] == musicaAtual) {
+				printf("-> ");
+			} else {
+				printf("   ");
+			}
+
         	printf("%s - %s\n", aux[i]->musica, aux[i]->artista);
     	}
 
@@ -105,6 +119,26 @@ void lerArquivo(FILE* arquivo, Playlist* playlist) {
 	}
 }
 
+No* avancarMusica(Playlist* playlist) {
+    if (playlist->atual) {
+        playlist->atual = playlist->atual->prox;
+    }
+
+    return playlist->atual;
+}
+
+No* voltarMusica(Playlist* playlist) {
+    if (playlist->atual) {
+        playlist->atual = playlist->atual->anterior;
+    }
+
+    return playlist->atual;
+}
+
+No* musicaAtual(Playlist* playlist) {
+	return playlist->atual;
+}
+
 void exibirMenu(FILE* arquivo, Playlist* playlist) {
 	int opcao = 0;
 
@@ -114,8 +148,6 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 	printf("3. Inserir nova música\n");
 	printf("4. Remover uma música\n");
 	printf("5. Buscar por determinada música\n");
-	printf("6. Avançar para próxima música\n");
-	printf("7. Retornar a música anterior\n");
 	printf("8. Sair\n\n");
 	printf("Escolha uma opção: ");
 
@@ -127,14 +159,72 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 	switch(opcao) {
 		case 1: {
 			limparTela();
-			exibirPlaylist(playlist);
+
+			No* atual = musicaAtual(playlist);
+
+			exibirPlaylist(playlist, atual);
+
+			int key = 0;
+
+			while(true) {
+				key = getch();
+
+				if(key == 224) {
+					switch(getch()) {
+						case DIREITA: {
+							atual = avancarMusica(playlist);
+							limparTela();
+							exibirPlaylist(playlist, atual);
+							break;
+						}
+						case ESQUERDA: {
+							atual = voltarMusica(playlist);
+							limparTela();
+							exibirPlaylist(playlist, atual);
+							break;
+						}
+					}		
+				} else if(key == ENTER) {
+					break;
+				}
+			}
+
 			voltarAoMenu(arquivo, playlist);
 
 			break;
 		}
 		case 2: {
 			limparTela();
-			exibirPlaylistOrdenada(playlist);
+
+			No* atual = musicaAtual(playlist);
+
+			exibirPlaylistOrdenada(playlist, atual);
+
+			int key = 0;
+
+			while(true) {
+				key = getch();
+
+				if(key == 224) {
+					switch(getch()) {
+						case DIREITA: {
+							atual = avancarMusica(playlist);
+							limparTela();
+							exibirPlaylistOrdenada(playlist, atual);
+							break;
+						}
+						case ESQUERDA: {
+							atual = voltarMusica(playlist);
+							limparTela();
+							exibirPlaylistOrdenada(playlist, atual);
+							break;
+						}
+					}		
+				} else if(key == ENTER) {
+					break;
+				}
+			}
+
 			voltarAoMenu(arquivo, playlist);
 
 			break;
@@ -149,10 +239,10 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 
 //-------------------------------------------------------------------------------------------------------------------//
 
-void voltarAoMenu(FILE* file, Playlist* playlist) {
+void voltarAoMenu(FILE* arquivo, Playlist* playlist) {
 	pausarTela();
 	limparTela();
-	exibirMenu(file, playlist);
+	exibirMenu(arquivo, playlist);
 }
 
 // Limpa a tela do console;
@@ -184,4 +274,6 @@ void configurarAmbiente() {
 			setlocale(LC_ALL, "Portuguese");
 		#endif
 	}
+
+	SetConsoleOutputCP(1252);
 }
