@@ -10,6 +10,7 @@ void limparTela();
 void exibirMenu(FILE* file, Playlist* playlist);
 void voltarAoMenu(FILE* file, Playlist* playlist);
 void lerArquivo(FILE* arquivo, Playlist* playlist);
+int salvarArquivo(FILE* arquivo, Playlist* playlist);
 Playlist* criarPlaylist();
 No* criarNo(const char* artist, const char* song);
 void exibirPlaylist(Playlist* playlist, No* musicaAtual);

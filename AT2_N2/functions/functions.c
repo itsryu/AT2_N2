@@ -3,26 +3,35 @@
 #include <locale.h>
 #include <string.h>
 #include <windows.h>
-#include <conio.h>
 
 #include "../headers/types.h"
 #include "../headers/functions.h"
 
 No* criarNo(const char* artista, const char* musica) {
 	No* no = (No*) malloc(sizeof(No));
-	strcpy(no->artista, artista);
-	strcpy(no->musica, musica);
-	no->prox = no->anterior	 = no;
 
-	return no;
+	if(no == NULL) {
+		return NULL;
+	} else {
+		strcpy(no->artista, artista);
+		strcpy(no->musica, musica);
+		no->prox = no->anterior = no;
+
+		return no;
+	}
 }
 
 Playlist* criarPlaylist() {
 	Playlist* playlist = (Playlist*) malloc(sizeof(Playlist));
-	playlist->topo = NULL;
-	playlist->atual = NULL;
 
-	return playlist;
+	if(playlist == NULL) {
+		return NULL;
+	} else {
+		playlist->topo = NULL;
+		playlist->atual = NULL;
+
+		return playlist;
+	}
 }
 
 void adicionarArtista(Playlist* playlist, const char* artist, const char* song) {
@@ -119,6 +128,26 @@ void lerArquivo(FILE* arquivo, Playlist* playlist) {
 	}
 }
 
+int salvarArquivo(FILE* arquivo, Playlist* playlist) {
+    arquivo = fopen(CAMINHO_ARQUIVO, "w");
+
+    if (arquivo == NULL) {
+        return 1;
+	} else {
+		No* atual = playlist->topo;
+
+		if(atual) {
+			do {
+				fprintf(arquivo, "%s;%s\n", atual->artista, atual->musica);
+				atual = atual->prox;
+			} while(atual != playlist->topo);
+		}
+
+		fclose(arquivo);
+		return 0;
+	}
+}
+
 No* avancarMusica(Playlist* playlist) {
     if (playlist->atual) {
         playlist->atual = playlist->atual->prox;
@@ -139,106 +168,9 @@ No* musicaAtual(Playlist* playlist) {
 	return playlist->atual;
 }
 
-void exibirMenu(FILE* arquivo, Playlist* playlist) {
-	int opcao = 0;
-
-	printf("---------- Sistema de playlist ----------\n\n");
-	printf("1. Exibir a playlist\n");
-	printf("2. Exibir a playlist ordenada\n");
-	printf("3. Inserir nova música\n");
-	printf("4. Remover uma música\n");
-	printf("5. Buscar por determinada música\n");
-	printf("8. Sair\n\n");
-	printf("Escolha uma opção: ");
-
-	while(scanf("%d", &opcao) != 1 && opcao < 0 || opcao > 8) {
-		printf("Opção inválida. Tente novamente: ");
-		while(getchar() != '\n');
-	}
-
-	switch(opcao) {
-		case 1: {
-			limparTela();
-
-			No* atual = musicaAtual(playlist);
-
-			exibirPlaylist(playlist, atual);
-
-			int key = 0;
-
-			while(true) {
-				key = getch();
-
-				if(key == 224) {
-					switch(getch()) {
-						case DIREITA: {
-							atual = avancarMusica(playlist);
-							limparTela();
-							exibirPlaylist(playlist, atual);
-							break;
-						}
-						case ESQUERDA: {
-							atual = voltarMusica(playlist);
-							limparTela();
-							exibirPlaylist(playlist, atual);
-							break;
-						}
-					}		
-				} else if(key == ENTER) {
-					break;
-				}
-			}
-
-			voltarAoMenu(arquivo, playlist);
-
-			break;
-		}
-		case 2: {
-			limparTela();
-
-			No* atual = musicaAtual(playlist);
-
-			exibirPlaylistOrdenada(playlist, atual);
-
-			int key = 0;
-
-			while(true) {
-				key = getch();
-
-				if(key == 224) {
-					switch(getch()) {
-						case DIREITA: {
-							atual = avancarMusica(playlist);
-							limparTela();
-							exibirPlaylistOrdenada(playlist, atual);
-							break;
-						}
-						case ESQUERDA: {
-							atual = voltarMusica(playlist);
-							limparTela();
-							exibirPlaylistOrdenada(playlist, atual);
-							break;
-						}
-					}		
-				} else if(key == ENTER) {
-					break;
-				}
-			}
-
-			voltarAoMenu(arquivo, playlist);
-
-			break;
-		}
-		case 8:
-		{
-			limparTela();
-			return;
-		}
-	}
-}
-
 //-------------------------------------------------------------------------------------------------------------------//
 
+// Exibe o menu;
 void voltarAoMenu(FILE* arquivo, Playlist* playlist) {
 	pausarTela();
 	limparTela();
@@ -258,7 +190,6 @@ void pausarTela() {
 		system("pause");
 	#endif
 }
-
 
 // Configura o ambiente de execução;
 void configurarAmbiente() {
