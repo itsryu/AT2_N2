@@ -50,6 +50,21 @@ void adicionarArtista(Playlist* playlist, const char* artista, const char* music
 	}
 }
 
+No* encontrarArtista(Playlist* playlist, const char* musica) {
+	if(!playlist->topo) {
+		return NULL;
+	} else {
+		No* atual = playlist->topo;
+
+		do {
+			if(strcmp(atual->musica, musica) == 0) return atual;
+			atual = atual->prox;
+		} while(atual != playlist->topo);
+
+		return NULL;
+	}
+}
+
 int removerArtista(Playlist* playlist, const char* musica) {
 	if(!playlist->topo) {
 		return 0;

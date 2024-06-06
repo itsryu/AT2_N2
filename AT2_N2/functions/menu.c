@@ -152,6 +152,29 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 
 			break;
 		}
+		case 5: {
+			limparTela();
+
+			char musica[100] = { "" };
+
+			printf("Digite o nome da música a ser buscada: ");
+			while(scanf(" %[^\n]", musica) != 1) {
+				printf("Erro ao ler o nome do artista, tente novamente: ");
+				while(getchar() != '\n');
+			}
+
+			No* musicaEncontrada = encontrarArtista(playlist, musica);
+
+			if(musicaEncontrada) {
+				printf("Música encontrada: %s - %s\n", musicaEncontrada->artista, musicaEncontrada->musica);
+			} else {
+				printf("Música não encontrada.\n");
+			}
+
+			voltarAoMenu(arquivo, playlist);
+
+			break;
+		}
 		case 8:
 		{
 			limparTela();
