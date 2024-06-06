@@ -47,11 +47,53 @@ void exibirPlaylist(Playlist* playlist) {
 		Node* current = playlist->topo;
 
 		do {
-			printf("%s - %s\n", current->artista, current->musica);
+			printf("%s - %s\n", current->musica, current->artista);
 			current = current->prox;
 		} while(current != playlist->topo);
 
 		printf("\n");
+	}
+}
+
+void exibirPlaylistOrdenada(Playlist* playlist) {
+    if (!playlist->topo) {
+		printf("Playlist vazia!\n");
+		return;
+	} else {
+    	Node* atual = playlist->topo;
+		int numMus = 0;
+
+    	do {
+        	numMus++;
+        	atual = atual->prox;
+    	} while (atual != playlist->topo);
+
+    	Node** aux = (Node**) malloc(numMus * sizeof(Node*));
+
+    	atual = playlist->topo;
+
+    	for (int i = 0; i < numMus; i++) {
+        	aux[i] = atual;
+        	atual = atual->prox;
+    	}
+
+    	for (int i = 0; i < numMus - 1; i++) {
+        	for (int j = i + 1; j < numMus; j++) {
+            	if (strcmp(aux[i]->musica, aux[j]->musica) > 0) {
+                	Node* temp = aux[i];
+                	aux[i] = aux[j];
+                	aux[j] = temp;
+            	}
+        	}
+    	}
+
+    	for (int i = 0; i < numMus; i++) {
+        	printf("%s - %s\n", aux[i]->musica, aux[i]->artista);
+    	}
+
+		printf("\n");
+
+		free(aux);
 	}
 }
 
@@ -83,11 +125,18 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 	}
 
 	switch(opcao) {
-		case 1:
-		{
+		case 1: {
 			limparTela();
 			exibirPlaylist(playlist);
 			voltarAoMenu(arquivo, playlist);
+
+			break;
+		}
+		case 2: {
+			limparTela();
+			exibirPlaylistOrdenada(playlist);
+			voltarAoMenu(arquivo, playlist);
+
 			break;
 		}
 		case 8:
@@ -125,7 +174,7 @@ void pausarTela() {
 void configurarAmbiente() {
 	#ifdef _WIN32
 		system("color 0A");
-		system("title Gerenciamento de Hotel");
+		system("title Sistema de Playlist");
 	#endif
 
 	char* local = setlocale(LC_ALL, "");

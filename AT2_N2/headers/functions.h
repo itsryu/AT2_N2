@@ -13,4 +13,5 @@ void lerArquivo(FILE* arquivo, Playlist* playlist);
 Playlist* criarPlaylist();
 Node* criarNo(const char* artist, const char* song);
 void exibirPlaylist(Playlist* playlist);
+void exibirPlaylistOrdenada(Playlist* playlist);
 void adicionarArtista(Playlist* playlist, const char* artist, const char* song);
