@@ -34,8 +34,8 @@ Playlist* criarPlaylist() {
 	}
 }
 
-void adicionarArtista(Playlist* playlist, const char* artist, const char* song) {
-	No* novoNo = criarNo(artist, song);
+void adicionarArtista(Playlist* playlist, const char* artista, const char* musica) {
+	No* novoNo = criarNo(artista, musica);
 
 	if(!playlist->topo) {
 		playlist->topo = novoNo;
@@ -48,6 +48,41 @@ void adicionarArtista(Playlist* playlist, const char* artist, const char* song) 
 		novoNo->prox = playlist->topo;
 		playlist->topo->anterior = novoNo;
 	}
+}
+
+int removerArtista(Playlist* playlist, const char* musica) {
+	if(!playlist->topo) {
+		return 0;
+	} else {
+		No* atual = playlist->topo;
+
+		do {
+			if(strcmp(atual->musica, musica) == 0) {
+				if(atual == playlist->topo) {
+					if(playlist->topo->prox == playlist->topo) {
+						free(playlist->topo);
+						playlist->topo = NULL;
+						playlist->atual = NULL;
+					} else {
+						No* aux = playlist->topo->anterior;
+						playlist->topo = playlist->topo->prox;
+						playlist->topo->anterior = aux;
+						aux->prox = playlist->topo;
+
+						free(atual);
+					}
+				} else {
+					atual->anterior->prox = atual->prox;
+					atual->prox->anterior = atual->anterior;
+					free(atual);
+				}
+				return 1;
+			}
+			atual = atual->prox;
+		} while(atual != playlist->topo);
+	}
+
+	return 0;
 }
 
 void exibirPlaylist(Playlist* playlist, No* musicaAtual) {
@@ -87,36 +122,40 @@ void exibirPlaylistOrdenada(Playlist* playlist, No* musicaAtual) {
 
 		No** aux = (No**) malloc(numMus * sizeof(No*));
 
-    	atual = playlist->topo;
+		if(aux == NULL) {
+			return;
+		} else {
+			atual = playlist->topo;
 
-    	for (int i = 0; i < numMus; i++) {
-        	aux[i] = atual;
-        	atual = atual->prox;
-    	}
-
-    	for (int i = 0; i < numMus - 1; i++) {
-        	for (int j = i + 1; j < numMus; j++) {
-            	if (strcmp(aux[i]->musica, aux[j]->musica) > 0) {
-					No* temp = aux[i];
-                	aux[i] = aux[j];
-                	aux[j] = temp;
-            	}
-        	}
-    	}
-
-    	for (int i = 0; i < numMus; i++) {
-			if (aux[i] == musicaAtual) {
-				printf("-> ");
-			} else {
-				printf("   ");
+			for(int i = 0; i < numMus; i++) {
+				aux[i] = atual;
+				atual = atual->prox;
 			}
 
-        	printf("%s - %s\n", aux[i]->musica, aux[i]->artista);
-    	}
+			for(int i = 0; i < numMus - 1; i++) {
+				for(int j = i + 1; j < numMus; j++) {
+					if(strcmp(aux[i]->musica, aux[j]->musica) > 0) {
+						No* temp = aux[i];
+						aux[i] = aux[j];
+						aux[j] = temp;
+					}
+				}
+			}
 
-		printf("\n");
+			for(int i = 0; i < numMus; i++) {
+				if(aux[i] == musicaAtual) {
+					printf("-> ");
+				} else {
+					printf("   ");
+				}
 
-		free(aux);
+				printf("%s - %s\n", aux[i]->musica, aux[i]->artista);
+			}
+
+			printf("\n");
+
+			free(aux);
+		}
 	}
 }
 

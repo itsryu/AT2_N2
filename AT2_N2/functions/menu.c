@@ -107,13 +107,13 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 			char artista[100] = { "" }, musica[100] = { "" };
 
 			printf("Digite o nome do artista: ");
-			while(scanf("%[^\n]", artista) != 1) {
+			while(scanf(" %[^\n]", artista) != 1) {
 				printf("Erro ao ler o nome do artista, tente novamente: ");
 				while(getchar() != '\n');
 			}
 
 			printf("Nome da música: ");
-			while(scanf("%[^\n]", musica) != 1) {
+			while(scanf(" %[^\n]", musica) != 1) {
 				printf("Erro ao ler o nome da música, tente novamente: ");
 				while(getchar() != '\n');
 			}
@@ -124,6 +124,28 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 				printf("Música adicionada com sucesso.\n");
 			} else {
 				printf("Erro ao adicionar a música.\n");
+			}
+
+			voltarAoMenu(arquivo, playlist);
+
+			break;
+		}
+		case 4: {
+			limparTela();
+
+			char musica[100] = { "" };
+
+			printf("Digite o nome da música a ser removida: ");
+			while(scanf(" %[^\n]", musica) != 1) {
+				printf("Erro ao ler o nome do artista, tente novamente: ");
+				while(getchar() != '\n');
+			}
+
+			if(removerArtista(playlist, musica)) {
+				salvarArquivo(CAMINHO_ARQUIVO, playlist);
+				printf("Música removida com sucesso.\n");
+			} else {
+				printf("Música não encontrada.\n");
 			}
 
 			voltarAoMenu(arquivo, playlist);
