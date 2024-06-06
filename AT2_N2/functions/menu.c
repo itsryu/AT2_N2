@@ -13,10 +13,10 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 	printf("3. Inserir nova música\n");
 	printf("4. Remover uma música\n");
 	printf("5. Buscar por determinada música\n");
-	printf("8. Sair\n\n");
+	printf("6. Sair\n\n");
 	printf("Escolha uma opção: ");
 
-	while(scanf("%d", &opcao) != 1 && opcao < 0 || opcao > 8) {
+	while(scanf("%d", &opcao) != 1 && (opcao < 0 || opcao > 6)) {
 		printf("Opção inválida. Tente novamente: ");
 		while(getchar() != '\n');
 	}
@@ -141,9 +141,15 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 				while(getchar() != '\n');
 			}
 
-			if(removerArtista(playlist, musica)) {
-				salvarArquivo(CAMINHO_ARQUIVO, playlist);
-				printf("Música removida com sucesso.\n");
+			No* musicaEncontrada = encontrarMusica(playlist, musica);
+
+			if(musicaEncontrada) {
+				if(removerArtista(playlist, musicaEncontrada) == 0) {;
+					salvarArquivo(CAMINHO_ARQUIVO, playlist);
+					printf("Música removida com sucesso.\n");
+				} else {
+					printf("Erro ao remover a música. Playlist vazia\n");
+				}
 			} else {
 				printf("Música não encontrada.\n");
 			}
@@ -163,7 +169,7 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 				while(getchar() != '\n');
 			}
 
-			No* musicaEncontrada = encontrarArtista(playlist, musica);
+			No* musicaEncontrada = encontrarMusica(playlist, musica);
 
 			if(musicaEncontrada) {
 				printf("Música encontrada: %s - %s\n", musicaEncontrada->artista, musicaEncontrada->musica);

@@ -50,7 +50,7 @@ void adicionarArtista(Playlist* playlist, const char* artista, const char* music
 	}
 }
 
-No* encontrarArtista(Playlist* playlist, const char* musica) {
+No* encontrarMusica(Playlist* playlist, const char* musica) {
 	if(!playlist->topo) {
 		return NULL;
 	} else {
@@ -65,39 +65,34 @@ No* encontrarArtista(Playlist* playlist, const char* musica) {
 	}
 }
 
-int removerArtista(Playlist* playlist, const char* musica) {
+int removerArtista(Playlist* playlist, No* musica) {
 	if(!playlist->topo) {
-		return 0;
+		return 1;
 	} else {
-		No* atual = playlist->topo;
+		if(musica == playlist->topo) {
+			if(playlist->topo->prox == playlist->topo) {
+				free(playlist->topo);
 
-		do {
-			if(strcmp(atual->musica, musica) == 0) {
-				if(atual == playlist->topo) {
-					if(playlist->topo->prox == playlist->topo) {
-						free(playlist->topo);
-						playlist->topo = NULL;
-						playlist->atual = NULL;
-					} else {
-						No* aux = playlist->topo->anterior;
-						playlist->topo = playlist->topo->prox;
-						playlist->topo->anterior = aux;
-						aux->prox = playlist->topo;
+				playlist->topo = NULL;
+				playlist->atual = NULL;
+			} else {
+				No* aux = playlist->topo->anterior;
 
-						free(atual);
-					}
-				} else {
-					atual->anterior->prox = atual->prox;
-					atual->prox->anterior = atual->anterior;
-					free(atual);
-				}
-				return 1;
+				playlist->topo = playlist->topo->prox;
+				playlist->topo->anterior = aux;
+				aux->prox = playlist->topo;
+
+				free(musica);
 			}
-			atual = atual->prox;
-		} while(atual != playlist->topo);
-	}
+		} else {
+			musica->anterior->prox = musica->prox;
+			musica->prox->anterior = musica->anterior;
 
-	return 0;
+			free(musica);
+		}
+
+		return 0;
+	}
 }
 
 void exibirPlaylist(Playlist* playlist, No* musicaAtual) {
