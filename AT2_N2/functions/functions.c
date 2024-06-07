@@ -95,6 +95,18 @@ int removerArtista(Playlist* playlist, No* musica) {
 	}
 }
 
+static void formatarLinha(char *dest, const char *src, int tamanho) {
+    int lenSrc = strlen(src);
+
+    if (lenSrc > tamanho) {
+        strncpy(dest, src, tamanho - 3);
+        dest[tamanho - 3] = '\0';
+        strcat(dest, "...");
+    } else {
+        strcpy(dest, src); 
+    }
+}
+
 void exibirPlaylist(Playlist* playlist, No* musicaAtual) {
 	if(!playlist->topo) {
 		printf("Playlist vazia!\n");
@@ -114,6 +126,20 @@ void exibirPlaylist(Playlist* playlist, No* musicaAtual) {
 			printf("%s - %s\n", current->musica, current->artista);
 			current = current->prox;
 		} while(current != playlist->topo);
+
+		int largura = 32;
+    	char musica[120] = {0}, artista[120] = {0}; 
+    		
+		formatarLinha(musica, musicaAtual->musica, largura);
+    	formatarLinha(artista, musicaAtual->artista, largura);
+
+		printf("\n+------------------------------------+\n");
+		printf("|                                    |\n");
+		printf("|    %-32s|\n", musica);
+		printf("|    %-32s|\n", artista);
+		printf("|                                    |\n");
+		printf("|           |<    ||    >|           |\n");
+		printf("+------------------------------------+\n\n");
 
 		printf("\n\nUtilize as setas do teclado (<- / ->) para mudar de música.\n");
 		printf("Pressione ENTER para voltar.");
@@ -168,6 +194,20 @@ void exibirPlaylistOrdenada(Playlist* playlist, No* musicaAtual) {
 
 				printf("%s - %s\n", aux[i]->musica, aux[i]->artista);
 			}
+
+			int largura = 32;
+    		char musica[120] = {0}, artista[120] = {0}; 
+    		
+			formatarLinha(musica, musicaAtual->musica, largura);
+    		formatarLinha(artista, musicaAtual->artista, largura);
+
+			printf("\n+------------------------------------+\n");
+			printf("|                                    |\n");
+			printf("|    %-32s|\n", musica);
+			printf("|    %-32s|\n", artista);
+			printf("|                                    |\n");
+			printf("|           |<    ||    >|           |\n");
+			printf("+------------------------------------+\n\n");
 
 			printf("\n\nUtilize as setas do teclado (<- / ->) para mudar de música.\n");
 			printf("Pressione ENTER para voltar.");

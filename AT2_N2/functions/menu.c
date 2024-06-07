@@ -16,7 +16,7 @@ void exibirMenu(FILE* arquivo, Playlist* playlist) {
 	printf("6. Sair\n\n");
 	printf("Escolha uma opção: ");
 
-	while(scanf("%d", &opcao) != 1 && (opcao < 0 || opcao > 6)) {
+	while(scanf("%d", &opcao) != 1 || opcao < 1 || opcao > 6) {
 		printf("Opção inválida. Tente novamente: ");
 		while(getchar() != '\n');
 	}
